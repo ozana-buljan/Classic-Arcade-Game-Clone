@@ -52,14 +52,7 @@ var Player = function () {
  * @description define Player update functoin
  */
 
-Player.prototype.update = function () {
-
-};
-
-/**
- * @description handle key events to the Player
- */
-Player.prototype.handleInput = function(key){
+Player.prototype.update = function (key) {
     // pressed left key
     if (key === 'left' && this.x > 0){
         this.x -= this.moveDistance;
@@ -70,6 +63,13 @@ Player.prototype.handleInput = function(key){
     } else if (key === 'down' && this.y <= ctx.height){
         this.y += this.moveDistance ;
     }
+};
+
+/**
+ * @description handle key events to the Player
+ */
+Player.prototype.handleInput = function(key){
+    this.update(key);
 };
 
 // Now instantiate your objects.
