@@ -1,10 +1,11 @@
 /** @description Enemies our player must avoid
  * @constructor
  */
-var Enemy = function() {
+var Enemy = function(x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    this.left = 0;
+    this.x = x;
+    this.y = y;
     this.speed = 1;
 
     // The image/sprite for our enemies, this uses
@@ -22,16 +23,10 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
 
-    this.left += this.speed * (dt * 0.12);
+    this.x += this.speed * (dt * 0.12);
 
 };
 
-/**
- * @description make Enemy keep moving towards right
- */
-Enemy.prototype.move = function () {
-
-};
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -43,13 +38,39 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 /**
- * @description define the Player clas
+ * @description define the Player class
  * @constructor
  */
 var Player = function () {
+    this.x = 200;
+    this.y = 400;
+    this.moveDistance = 50;
+    this.sprite ='images/char-horn-girl.png';
+};
+
+/**
+ * @description define Player update functoin
+ */
+
+Player.prototype.update = function () {
 
 };
 
+/**
+ * @description handle key events to the Player
+ */
+Player.prototype.handleInput = function(key){
+    // pressed left key
+    if (key === 'left' && this.x > 0){
+        this.x -= this.moveDistance;
+    } else if ( key === 'up' && this.y > 0) {
+        this.y -= this.moveDistance;
+    } else if (key === 'right' && this.x <= ctx.width){
+        this.x += this.moveDistance;
+    } else if (key === 'down' && this.y <= ctx.height){
+        this.y += this.moveDistance ;
+    }
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -58,6 +79,8 @@ var Player = function () {
 var enemyA = new Enemy();
 var enemyB = new Enemy();
 var allEnemies = [enemyA, enemyB];
+
+var player = new Player();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
