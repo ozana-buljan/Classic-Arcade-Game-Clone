@@ -5,22 +5,25 @@
 var blockWidth = 101,
     blockHeight = 83,
     numRows = 6,
-    numCols = 5;
+    numCols = 5,
+    minSpeed = Math.ceil(60),
+    maxSpeed = Math.floor(120);
 
-var availableRowsForEnemy = [1, 2, 3];
 
 /** @description Enemies our player must avoid
  * @constructor
  */
 
-var Enemy = function() {
+var Enemy = function (row) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     // randomly load bug on game start
-    this.row = availableRowsForEnemy[Math.floor(Math.random()*availableRowsForEnemy.length)];
+    this.row = row;
     // randomly set the start point of an enemy
-    this.x = (-blockWidth) - Math.floor(Math.random() * 20);
-    this.speed = 40;
+    this.x = (-blockWidth) - Math.floor(Math.random() * 120);
+
+    // define speed
+    this.speed = minSpeed + Math.floor(Math.random() * (maxSpeed - minSpeed));
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -32,18 +35,23 @@ var Enemy = function() {
  * @Param: dt, a time delta between `ticks
  */
 
-Enemy.prototype.update = function(dt) {
+Enemy.prototype.update = function (dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.x += this.speed * dt;
+    if (this.x < numRows * blockWidth) {
+        this.x += this.speed * dt;
+    } else {
+        this.x = (-blockWidth) - Math.floor(Math.random() * 20);
+        this.speed = minSpeed + Math.floor(Math.random() * (maxSpeed - minSpeed));
+    }
 };
 
 /**
  * @description Draw the enemy on the screen, required method for game
  */
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.row * (blockHeight -10));
+Enemy.prototype.render = function () {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.row * (blockHeight - 13));
 };
 
 // Now write your own player class
@@ -73,26 +81,26 @@ var Player = function () {
 
 Player.prototype.update = function (key) {
     // pressed left key
-    if (key === 'left' && this.col > 1 ){
+    if (key === 'left' && this.col > 1) {
         this.col--;
-        this.x = (this.col-1) * this.moveDistanceX;
-    } else if ( key === 'up' && this.row > 1 ) {
+        this.x = (this.col - 1) * this.moveDistanceX;
+    } else if (key === 'up' && this.row > 1) {
         this.row--;
-        this.y = (this.row-1) * this.moveDistanceY;
-    } else if (key === 'right' && this.col < numCols){
+        this.y = (this.row - 1) * this.moveDistanceY;
+    } else if (key === 'right' && this.col < numCols) {
         this.col++;
-        this.x = (this.col-1) * this.moveDistanceX;
-    } else if (key === 'down' && this.row < numRows){
+        this.x = (this.col - 1) * this.moveDistanceX;
+    } else if (key === 'down' && this.row < numRows) {
         this.row++;
-        this.y = (this.row-1) * this.moveDistanceY;
-    } else{
+        this.y = (this.row - 1) * this.moveDistanceY;
+    } else {
 
     }
 };
 /**
  * @description render Player on the canvas
  */
-Player.prototype.render = function() {
+Player.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
@@ -100,7 +108,7 @@ Player.prototype.render = function() {
 /**
  * @description handle key events to the Player
  */
-Player.prototype.handleInput = function(key){
+Player.prototype.handleInput = function (key) {
     this.update(key);
 };
 
@@ -108,16 +116,16 @@ Player.prototype.handleInput = function(key){
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var enemyA = new Enemy();
-var enemyB = new Enemy();
-var enemyC = new Enemy();
+var enemyA = new Enemy(1);
+var enemyB = new Enemy(2);
+var enemyC = new Enemy(3);
 var allEnemies = [enemyA, enemyB, enemyC];
 
 var player = new Player();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
+document.addEventListener('keyup', function (e) {
     var allowedKeys = {
         37: 'left',
         38: 'up',
