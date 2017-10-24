@@ -6,13 +6,13 @@ var blockWidth = 101,
     blockHeight = 83,
     numRows = 6,
     numCols = 5,
-    minSpeed = Math.ceil(60),
-    maxSpeed = Math.floor(120);
+    minSpeed = Math.ceil(80),
+    maxSpeed = Math.floor(800);
 
 
 /** @description Enemies our player must avoid
  * @constructor
- */
+
 
 var Enemy = function (row) {
     // Variables applied to each of our instances go here,
@@ -20,7 +20,7 @@ var Enemy = function (row) {
     // randomly load bug on game start
     this.row = row;
     // randomly set the start point of an enemy
-    this.x = (-blockWidth) - Math.floor(Math.random() * 120);
+    this.x = (-blockWidth) - Math.floor(Math.random() * 360);
 
     // define speed
     this.speed = minSpeed + Math.floor(Math.random() * (maxSpeed - minSpeed));
@@ -42,7 +42,7 @@ Enemy.prototype.update = function (dt) {
     if (this.x < numRows * blockWidth) {
         this.x += this.speed * dt;
     } else {
-        this.x = (-blockWidth) - Math.floor(Math.random() * 20);
+        this.x = (-blockWidth) - Math.floor(Math.random() * 400);
         this.speed = minSpeed + Math.floor(Math.random() * (maxSpeed - minSpeed));
     }
 };
@@ -119,6 +119,9 @@ Player.prototype.handleInput = function (key) {
 var enemyA = new Enemy(1);
 var enemyB = new Enemy(2);
 var enemyC = new Enemy(3);
+var enemyD = new Enemy(4);
+var enemyE = new Enemy(5);
+var enemyF = new Enemy(6);
 var allEnemies = [enemyA, enemyB, enemyC];
 
 var player = new Player();
