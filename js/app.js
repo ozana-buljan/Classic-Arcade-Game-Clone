@@ -1,11 +1,22 @@
+/**
+ * @description define each block size
+ */
+
+var blockWidth = 101,
+    blockHeight = 83,
+    numRows = 6,
+    numCols = 5;
+
 /** @description Enemies our player must avoid
  * @constructor
+ * @param {number} row: define the row of the bug
  */
-var Enemy = function(x, y) {
+
+var Enemy = function(row) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    this.x = x;
-    this.y = y;
+    this.row = row;
+    this.x = (-blockWidth);
     this.speed = 1;
 
     // The image/sprite for our enemies, this uses
@@ -15,24 +26,22 @@ var Enemy = function(x, y) {
 
 /**
  * @description : Update the enemy's position, required method for game
- * @Parameter: dt, a time delta between `ticks
+ * @Param: dt, a time delta between `ticks
  */
 
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-
     this.x += this.speed * (dt * 0.12);
-
 };
 
-
-// Draw the enemy on the screen, required method for game
+/**
+ * @description Draw the enemy on the screen, required method for game
+ */
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.row * blockHeight);
 };
-
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -42,10 +51,17 @@ Enemy.prototype.render = function() {
  * @constructor
  */
 var Player = function () {
-    this.x = 200;
-    this.y = 400;
-    this.moveDistance = 50;
-    this.sprite ='images/char-horn-girl.png';
+    // initial position of the player on the grid
+    this.col = 3;
+    this.row = 5;
+    this.moveDistanceX = blockWidth;
+    this.moveDistanceY = 161 - blockHeight;
+
+    // Initial x, y coordinator of the player, (this.col-1) is to reduce the player image width.
+    this.x = (this.col - 1) * this.moveDistanceX;
+    this.y = (this.row - 1) * this.moveDistanceY;
+
+    this.sprite = 'images/char-boy.png';
 };
 
 /**
@@ -54,16 +70,29 @@ var Player = function () {
 
 Player.prototype.update = function (key) {
     // pressed left key
-    if (key === 'left' && this.x > 0){
-        this.x -= this.moveDistance;
-    } else if ( key === 'up' && this.y > 0) {
-        this.y -= this.moveDistance;
-    } else if (key === 'right' && this.x <= ctx.width){
-        this.x += this.moveDistance;
-    } else if (key === 'down' && this.y <= ctx.height){
-        this.y += this.moveDistance ;
+    if (key === 'left' && this.col > 1 ){
+        this.col--;
+        this.x = (this.col-1) * this.moveDistanceX;
+    } else if ( key === 'up' && this.row > 1 ) {
+        this.row--;
+        this.y = (this.row-1) * this.moveDistanceY;
+    } else if (key === 'right' && this.col < numCols){
+        this.col++;
+        this.x = (this.col-1) * this.moveDistanceX;
+    } else if (key === 'down' && this.row < numRows){
+        this.row++;
+        this.y = (this.row-1) * this.moveDistanceY;
+    } else{
+
     }
 };
+/**
+ * @description render Player on the canvas
+ */
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
 
 /**
  * @description handle key events to the Player
@@ -76,9 +105,10 @@ Player.prototype.handleInput = function(key){
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var enemyA = new Enemy();
-var enemyB = new Enemy();
-var allEnemies = [enemyA, enemyB];
+var enemyA = new Enemy(1);
+var enemyB = new Enemy(2);
+var enemyC = new Enemy(3);
+var allEnemies = [enemyA, enemyB, enemyC];
 
 var player = new Player();
 
