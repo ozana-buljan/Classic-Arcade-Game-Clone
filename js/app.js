@@ -7,17 +7,20 @@ var blockWidth = 101,
     numRows = 6,
     numCols = 5;
 
+var availableRowsForEnemy = [1, 2, 3];
+
 /** @description Enemies our player must avoid
  * @constructor
- * @param {number} row: define the row of the bug
  */
 
-var Enemy = function(row) {
+var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    this.row = row;
-    this.x = (-blockWidth);
-    this.speed = 1;
+    // randomly load bug on game start
+    this.row = availableRowsForEnemy[Math.floor(Math.random()*availableRowsForEnemy.length)];
+    // randomly set the start point of an enemy
+    this.x = (-blockWidth) - Math.floor(Math.random() * 20);
+    this.speed = 40;
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -33,14 +36,14 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.x += this.speed * (dt * 0.12);
+    this.x += this.speed * dt;
 };
 
 /**
  * @description Draw the enemy on the screen, required method for game
  */
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.row * blockHeight);
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.row * (blockHeight -10));
 };
 
 // Now write your own player class
@@ -105,9 +108,9 @@ Player.prototype.handleInput = function(key){
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var enemyA = new Enemy(1);
-var enemyB = new Enemy(2);
-var enemyC = new Enemy(3);
+var enemyA = new Enemy();
+var enemyB = new Enemy();
+var enemyC = new Enemy();
 var allEnemies = [enemyA, enemyB, enemyC];
 
 var player = new Player();
