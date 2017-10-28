@@ -1,28 +1,19 @@
 /**
  * @description define each block size
  */
-
 var blockWidth = 101,
     blockHeight = 83,
     numRows = 6,
     numCols = 5,
     minSpeed = Math.ceil(80),
     maxSpeed = Math.floor(800),
-    score = 0;
-
-/**
- * @description update score on the site
- */
-
-function updateScore(){
-
-}
+    score = 0,
+    safeDistance = blockWidth;
 
 
 /** @description Enemies our player must avoid
  * @constructor
-*/
-
+ */
 var Enemy = function (row) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -39,11 +30,11 @@ var Enemy = function (row) {
     this.sprite = 'images/enemy-bug.png';
 };
 
+
 /**
  * @description : Update the enemy's position, required method for game
  * @Param: dt, a time delta between `ticks
  */
-
 Enemy.prototype.update = function (dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
@@ -56,6 +47,7 @@ Enemy.prototype.update = function (dt) {
     }
 };
 
+
 /**
  * @description Draw the enemy on the screen, required method for game
  */
@@ -63,9 +55,7 @@ Enemy.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.row * (blockHeight - 13));
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+
 /**
  * @description define the Player class
  * @constructor
@@ -84,16 +74,16 @@ var Player = function () {
     this.sprite = 'images/char-boy.png';
 };
 
-/**
- * @description define Player update functoin
- */
 
+/**
+ * @description define Player update function
+ */
 Player.prototype.update = function (key) {
     // pressed left key
     if (key === 'left' && this.col > 1) {
         this.col--;
         this.x = (this.col - 1) * this.moveDistanceX;
-    } else if (key === 'up' && this.row > 1) {
+    } else if (key === 'up' && this.row >= 1) {
         this.row--;
         this.y = (this.row - 1) * this.moveDistanceY;
     } else if (key === 'right' && this.col < numCols) {
@@ -102,11 +92,26 @@ Player.prototype.update = function (key) {
     } else if (key === 'down' && this.row < numRows) {
         this.row++;
         this.y = (this.row - 1) * this.moveDistanceY;
-    } else if (this.row = 1){
-
-
+    } else if (this.row === 1) {
+        updateScore(this);
+        this.reset();
     }
 };
+
+
+/**
+ * @description reset the position of te player when win or fail
+ */
+Player.prototype.reset = function () {
+    // reached the river and reset the position
+    this.row = 5;
+    this.col = 3;
+
+    this.x = (this.col - 1) * this.moveDistanceX;
+    this.y = (this.row - 1) * this.moveDistanceY;
+};
+
+
 /**
  * @description render Player on the canvas
  */
@@ -122,21 +127,10 @@ Player.prototype.handleInput = function (key) {
     this.update(key);
 };
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
 
-var enemyA = new Enemy(1);
-var enemyB = new Enemy(2);
-var enemyC = new Enemy(3);
-var enemyD = new Enemy(1);
-var enemyE = new Enemy(3);
-var allEnemies = [enemyA, enemyB, enemyC, enemyD, enemyE];
-
-var player = new Player();
-
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+/**
+ * @description listens for key presses and sends the keys to Player.handleInput() method.
+ */
 document.addEventListener('keyup', function (e) {
     var allowedKeys = {
         37: 'left',
@@ -147,3 +141,53 @@ document.addEventListener('keyup', function (e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+
+/**
+ * @description update score display when player reach the river
+ * @param player {object} the player
+  */
+function updateScore(player){
+    if (player.row  === 1){
+        score ++;
+        $('.score-value').text(score);
+        console.log('score:'+score);
+    }
+}
+
+
+/**
+ * @description check the collision event
+ * @param enemies {Array} the list of enemies
+ * @param player {object} the main player of the game
+ */
+function colliision(enemies, player){
+    var playerRow = player.row;
+    var playX = player.x;
+
+    // loop each enemies positoin
+    enemies.forEach(function (enemy) {
+        if(enemy.row === playerRow){
+            // calculate distance to judge if it is a collision event
+            var dist = Math.abs(playX-enemy.x);
+            if (dist < safeDistance){
+                // collision happen, the player needs to go back to the start point
+                player.reset();
+            } else {
+                console.log("You are safe");
+            }
+        }
+    });
+}
+
+
+/**
+ * @description instantiate enemies and the player
+ */
+var enemyA = new Enemy(1);
+var enemyB = new Enemy(2);
+var enemyC = new Enemy(3);
+var enemyD = new Enemy(1);
+var enemyE = new Enemy(3);
+var allEnemies = [enemyA, enemyB, enemyC, enemyD, enemyE];
+var player = new Player();
