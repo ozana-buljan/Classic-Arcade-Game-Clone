@@ -6,9 +6,9 @@ var blockWidth = 101,
     numRows = 6,
     numCols = 5,
     minSpeed = Math.ceil(80),
-    maxSpeed = Math.floor(800),
+    maxSpeed = Math.floor(600),
     score = 0,
-    safeDistance = blockWidth;
+    safeDistance = blockWidth/2;
 
 
 /** @description Enemies our player must avoid
@@ -21,6 +21,7 @@ var Enemy = function (row) {
     this.row = row;
     // randomly set the start point of an enemy
     this.x = (-blockWidth) - Math.floor(Math.random() * 360);
+
 
     // define speed
     this.speed = minSpeed + Math.floor(Math.random() * (maxSpeed - minSpeed));
@@ -36,9 +37,7 @@ var Enemy = function (row) {
  * @Param: dt, a time delta between `ticks
  */
 Enemy.prototype.update = function (dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+    // multiply any movement by the dt parameter
     if (this.x < numRows * blockWidth) {
         this.x += this.speed * dt;
     } else {
@@ -52,7 +51,7 @@ Enemy.prototype.update = function (dt) {
  * @description Draw the enemy on the screen, required method for game
  */
 Enemy.prototype.render = function () {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.row * (blockHeight - 13));
+    ctx.drawImage(Resources.get(this.sprite), this.x, (this.row-1) * (blockHeight - 13));
 };
 
 
@@ -146,14 +145,26 @@ document.addEventListener('keyup', function (e) {
 /**
  * @description update score display when player reach the river
  * @param player {object} the player
-  */
-function updateScore(player){
-    if (player.row  === 1){
-        score ++;
+ */
+function updateScore(player) {
+    if (player.row === 1) {
+        score++;
         $('.score-value').text(score);
-        console.log('score:'+score);
+        console.log('score:' + score);
     }
 }
+
+
+/**
+ * @description instantiate enemies and the player
+ */
+var enemyA = new Enemy(2);
+var enemyB = new Enemy(3);
+var enemyC = new Enemy(4);
+var enemyD = new Enemy(2);
+var enemyE = new Enemy(4);
+var allEnemies = [enemyA, enemyB, enemyC, enemyD, enemyE];
+var player = new Player();
 
 
 /**
@@ -161,33 +172,17 @@ function updateScore(player){
  * @param enemies {Array} the list of enemies
  * @param player {object} the main player of the game
  */
-function colliision(enemies, player){
-    var playerRow = player.row;
-    var playX = player.x;
+function checkCollisions(enemies, player) {
+    for (var i = 0; i < enemies.length; i++) {
+        var enemyX = enemies[i].x;
+        var playerX = player.x;
 
-    // loop each enemies positoin
-    enemies.forEach(function (enemy) {
-        if(enemy.row === playerRow){
+        if (enemies[i].row === player.row) {
             // calculate distance to judge if it is a collision event
-            var dist = Math.abs(playX-enemy.x);
-            if (dist < safeDistance){
-                // collision happen, the player needs to go back to the start point
+            // when player is on the left side of the enemy
+            if(Math.abs(enemyX - playerX) <= safeDistance){
                 player.reset();
-            } else {
-                console.log("You are safe");
             }
         }
-    });
+    }
 }
-
-
-/**
- * @description instantiate enemies and the player
- */
-var enemyA = new Enemy(1);
-var enemyB = new Enemy(2);
-var enemyC = new Enemy(3);
-var enemyD = new Enemy(1);
-var enemyE = new Enemy(3);
-var allEnemies = [enemyA, enemyB, enemyC, enemyD, enemyE];
-var player = new Player();
