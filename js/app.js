@@ -7,12 +7,21 @@ var blockWidth = 101,
     numRows = 6,
     numCols = 5,
     minSpeed = Math.ceil(80),
-    maxSpeed = Math.floor(800);
+    maxSpeed = Math.floor(800),
+    score = 0;
+
+/**
+ * @description update score on the site
+ */
+
+function updateScore(){
+
+}
 
 
 /** @description Enemies our player must avoid
  * @constructor
-
+*/
 
 var Enemy = function (row) {
     // Variables applied to each of our instances go here,
@@ -93,7 +102,8 @@ Player.prototype.update = function (key) {
     } else if (key === 'down' && this.row < numRows) {
         this.row++;
         this.y = (this.row - 1) * this.moveDistanceY;
-    } else {
+    } else if (this.row = 1){
+
 
     }
 };
@@ -119,10 +129,9 @@ Player.prototype.handleInput = function (key) {
 var enemyA = new Enemy(1);
 var enemyB = new Enemy(2);
 var enemyC = new Enemy(3);
-var enemyD = new Enemy(4);
-var enemyE = new Enemy(5);
-var enemyF = new Enemy(6);
-var allEnemies = [enemyA, enemyB, enemyC];
+var enemyD = new Enemy(1);
+var enemyE = new Enemy(3);
+var allEnemies = [enemyA, enemyB, enemyC, enemyD, enemyE];
 
 var player = new Player();
 
