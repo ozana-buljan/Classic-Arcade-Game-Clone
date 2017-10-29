@@ -1,14 +1,14 @@
 /**
  * @description define each block size
  */
-var blockWidth = 101,
-    blockHeight = 83,
-    numRows = 6,
-    numCols = 5,
-    minSpeed = Math.ceil(80),
-    maxSpeed = Math.floor(600),
+var BLOCK_WIDTH = 101,
+    BLOCK_HEIGHT = 83,
+    NUM_ROWS = 6,
+    NUM_COLS = 5,
+    MIN_SPEED = Math.ceil(80),
+    MAX_SPEED = Math.floor(600),
     score = 0,
-    safeDistance = blockWidth/2;
+    SAFE_DISTANCE = BLOCK_WIDTH/2;
 
 
 /** @description Enemies our player must avoid
@@ -20,11 +20,11 @@ var Enemy = function (row) {
     // randomly load bug on game start
     this.row = row;
     // randomly set the start point of an enemy
-    this.x = (-blockWidth) - Math.floor(Math.random() * 360);
+    this.x = (-BLOCK_WIDTH) - Math.floor(Math.random() * 360);
 
 
     // define speed
-    this.speed = minSpeed + Math.floor(Math.random() * (maxSpeed - minSpeed));
+    this.speed = MIN_SPEED + Math.floor(Math.random() * (MAX_SPEED - MIN_SPEED));
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -38,11 +38,11 @@ var Enemy = function (row) {
  */
 Enemy.prototype.update = function (dt) {
     // multiply any movement by the dt parameter
-    if (this.x < numRows * blockWidth) {
+    if (this.x < NUM_ROWS * BLOCK_WIDTH) {
         this.x += this.speed * dt;
     } else {
-        this.x = (-blockWidth) - Math.floor(Math.random() * 400);
-        this.speed = minSpeed + Math.floor(Math.random() * (maxSpeed - minSpeed));
+        this.x = (-BLOCK_WIDTH) - Math.floor(Math.random() * 400);
+        this.speed = MIN_SPEED + Math.floor(Math.random() * (MAX_SPEED - MIN_SPEED));
     }
 };
 
@@ -51,7 +51,7 @@ Enemy.prototype.update = function (dt) {
  * @description Draw the enemy on the screen, required method for game
  */
 Enemy.prototype.render = function () {
-    ctx.drawImage(Resources.get(this.sprite), this.x, (this.row-1) * (blockHeight - 13));
+    ctx.drawImage(Resources.get(this.sprite), this.x, (this.row-1) * (BLOCK_HEIGHT - 13));
 };
 
 
@@ -63,8 +63,8 @@ var Player = function () {
     // initial position of the player on the grid
     this.col = 3;
     this.row = 5;
-    this.moveDistanceX = blockWidth;
-    this.moveDistanceY = 161 - blockHeight;
+    this.moveDistanceX = BLOCK_WIDTH;
+    this.moveDistanceY = 161 - BLOCK_HEIGHT;
 
     // Initial x, y coordinator of the player, (this.col-1) is to reduce the player image width.
     this.x = (this.col - 1) * this.moveDistanceX;
@@ -85,10 +85,10 @@ Player.prototype.update = function (key) {
     } else if (key === 'up' && this.row >= 1) {
         this.row--;
         this.y = (this.row - 1) * this.moveDistanceY;
-    } else if (key === 'right' && this.col < numCols) {
+    } else if (key === 'right' && this.col < NUM_COLS) {
         this.col++;
         this.x = (this.col - 1) * this.moveDistanceX;
-    } else if (key === 'down' && this.row < numRows) {
+    } else if (key === 'down' && this.row < NUM_ROWS) {
         this.row++;
         this.y = (this.row - 1) * this.moveDistanceY;
     } else if (this.row === 1) {
@@ -173,14 +173,14 @@ var player = new Player();
  * @param player {object} the main player of the game
  */
 function checkCollisions(enemies, player) {
-    for (var i = 0; i < enemies.length; i++) {
+    for (var i = 0, len = enemies.length; i < len; i++) {
         var enemyX = enemies[i].x;
         var playerX = player.x;
 
         if (enemies[i].row === player.row) {
             // calculate distance to judge if it is a collision event
             // when player is on the left side of the enemy
-            if(Math.abs(enemyX - playerX) <= safeDistance){
+            if(Math.abs(enemyX - playerX) <= SAFE_DISTANCE){
                 player.reset();
             }
         }
